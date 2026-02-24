@@ -1,0 +1,19 @@
+body {
+    background-color: #ffffff; /* Day mode background */
+    color: #000000;           /* Day mode text color */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.night {
+    background-color: #1e1e2f; /* Night mode background */
+    color: #f5f5f5;           /* Night mode text color */
+}
+
+/* Optional: button style */
+#theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
