@@ -3,249 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tradesk Solution</title>
-
+<title>Pro AI Trading Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-body{
-background:#0a0a0f;
-color:white;
-overflow-x:hidden;
-transition:0.4s;
-}
+/* ===== General ===== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#0a0a0f;color:white;overflow-x:hidden;transition:0.4s;}
+button{cursor:pointer;font-weight:600;transition:0.3s;}
 
-/* Animated Gradient Background */
-body::before{
-content:'';
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:radial-gradient(circle at 20% 30%,#1e3a8a,transparent),
-radial-gradient(circle at 80% 70%,#7c3aed,transparent);
-z-index:-1;
-animation:moveBg 8s infinite alternate;
-}
+/* ===== Navbar ===== */
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 8%;backdrop-filter:blur(10px);background:rgba(0,0,0,0.4);position:fixed;width:100%;z-index:100;}
+nav h1{font-size:24px;font-weight:700;}
+nav button{padding:8px 15px;border-radius:20px;border:none;background:white;color:black;}
 
-@keyframes moveBg{
-0%{transform:scale(1)}
-100%{transform:scale(1.2)}
-}
+/* ===== Sidebar ===== */
+#sidebar{position:fixed;top:50%;left:0;transform:translateY(-50%);background:rgba(0,255,255,0.1);backdrop-filter:blur(15px);border-radius:0 25px 25px 0;padding:20px 10px;z-index:150;box-shadow:0 0 30px #00ffff;}
+#sidebar ul{list-style:none;}
+#sidebar ul li{margin:20px 0;cursor:pointer;color:#00ffff;font-weight:700;font-size:18px;transition:0.3s;}
+#sidebar ul li.active{color:#ff0080;text-shadow:0 0 15px #ff0080;}
+#sidebar ul li:hover{transform:scale(1.1);}
 
-/* Navbar */
-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px 8%;
-backdrop-filter:blur(10px);
-background:rgba(0,0,0,0.4);
-position:fixed;
-width:100%;
-z-index:100;
-}
+/* ===== Hero Section ===== */
+.hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 20px;}
+.hero h2{font-size:60px;font-weight:800;max-width:900px;}
+.hero p{margin-top:20px;font-size:18px;opacity:0.7;max-width:600px;}
+.hero .btns{margin-top:30px;}
+.primary{background:white;color:black;padding:14px 35px;border-radius:40px;border:none;margin:10px;}
+.primary:hover{transform:scale(1.1);}
+.secondary{background:transparent;border:1px solid white;color:white;padding:14px 35px;border-radius:40px;margin:10px;}
+.secondary:hover{background:white;color:black;}
 
-nav h1{
-font-size:24px;
-font-weight:700;
-}
+/* ===== Dashboard ===== */
+.dashboard{display:none;padding:120px 8%;}
+.dashboard h2{margin-bottom:30px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;}
+.stat{background:rgba(255,255,255,0.05);padding:30px;border-radius:15px;text-align:center;transition:0.3s;}
+.stat h3{font-size:28px;color:#00ffff;text-shadow:0 0 10px #00ffff,0 0 20px #00ffff,0 0 30px #00ffff;transition:0.3s;}
+.stat p{color:#fff;margin-top:8px;font-weight:600;opacity:0.8;}
 
-nav button{
-padding:8px 15px;
-border-radius:20px;
-border:none;
-cursor:pointer;
-background:white;
-color:black;
-font-weight:600;
-}
+/* ===== Tabs ===== */
+.tabs{display:flex;gap:20px;margin-bottom:40px;}
+.tab{padding:10px 20px;border-radius:20px;background:rgba(255,255,255,0.05);cursor:pointer;transition:0.3s;}
+.tab.active{background:#00ffff;color:#000;text-shadow:0 0 10px #00ffff;}
 
-/* Hero */
-.hero{
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:0 20px;
-}
+/* ===== Charts ===== */
+canvas{background:rgba(0,0,0,0.2);border-radius:20px;padding:20px;box-shadow:0 0 30px #00ffff;}
+.charts{display:grid;grid-template-columns:1fr;gap:40px;margin-top:20px;}
 
-.hero h2{
-font-size:60px;
-font-weight:800;
-max-width:900px;
-}
+/* ===== Notifications ===== */
+#notifications{position:fixed;top:20px;right:20px;width:250px;z-index:250;}
+.notification{background:rgba(0,255,255,0.1);color:#00ffff;padding:15px 20px;border-radius:20px;margin-bottom:15px;box-shadow:0 0 20px #00ffff;font-weight:700;opacity:0;transform:translateX(100%);animation:slideIn 0.5s forwards, fadeOut 0.5s forwards 3s;}
+@keyframes slideIn{0%{opacity:0;transform:translateX(100%);}100%{opacity:1;transform:translateX(0);}}
+@keyframes fadeOut{0%{opacity:1;}100%{opacity:0;}}
 
-.hero p{
-margin-top:20px;
-font-size:18px;
-opacity:0.7;
-max-width:600px;
-}
+/* ===== AI Chat ===== */
+#ai-chat{position:fixed;bottom:20px;left:20px;width:250px;background:rgba(0,255,255,0.1);border-radius:25px;box-shadow:0 0 30px #00ffff;font-weight:700;z-index:300;display:flex;flex-direction:column;overflow:hidden;}
+#chat-header{background:#00ffff;color:#000;padding:10px;cursor:pointer;text-align:center;font-weight:800;user-select:none;box-shadow:0 0 15px #00ffff;}
+#chat-body{padding:10px;height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.chat-message{padding:8px 12px;border-radius:15px;max-width:80%;word-wrap:break-word;}
+.chat-message.bot{background:rgba(0,255,255,0.3);color:#000;align-self:flex-start;box-shadow:0 0 15px #00ffff;}
+.chat-message.user{background:#00ffff;color:#000;align-self:flex-end;box-shadow:0 0 15px #00ffff;}
+#chat-input{border:none;border-top:1px solid #00ffff;padding:10px;outline:none;background:rgba(0,0,0,0.2);color:#fff;}
 
-.hero .btns{
-margin-top:30px;
-}
+/* ===== Particles ===== */
+#particlesCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;}
 
-.hero button{
-padding:14px 35px;
-margin:10px;
-border-radius:40px;
-border:none;
-cursor:pointer;
-font-size:16px;
-transition:0.3s;
-}
+/* ===== Code Simulation ===== */
+.code-tabs{display:flex;gap:10px;margin-top:20px;margin-bottom:15px;}
+.code-tab{padding:8px 15px;border-radius:15px;border:none;background:rgba(0,255,255,0.1);color:#00ffff;font-weight:700;cursor:pointer;transition:0.3s;}
+.code-tab.active{background:#00ffff;color:#000;text-shadow:0 0 10px #00ffff;}
+.code-block{background:rgba(0,0,0,0.2);padding:20px;border-radius:15px;overflow-x:auto;box-shadow:0 0 20px #00ffff;font-family:monospace;line-height:1.5;color:#00ffff;}
+body.day .code-block{background:rgba(255,255,255,0.1);color:#ff0080;box-shadow:0 0 15px #ff0080;}
 
-.primary{
-background:white;
-color:black;
-}
+/* ===== Modal ===== */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;}
+.modal-content{background:#111;padding:40px;border-radius:20px;width:350px;text-align:center;}
+.modal input{width:100%;padding:10px;margin:10px 0;border-radius:10px;border:none;}
+.modal button{width:100%;padding:10px;margin-top:10px;border:none;border-radius:10px;background:white;color:black;font-weight:600;cursor:pointer;}
 
-.primary:hover{
-transform:scale(1.1);
-}
-
-.secondary{
-background:transparent;
-border:1px solid white;
-color:white;
-}
-
-.secondary:hover{
-background:white;
-color:black;
-}
-
-/* Features */
-.features{
-padding:100px 8%;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:30px;
-}
-
-.card{
-background:rgba(255,255,255,0.05);
-padding:40px;
-border-radius:20px;
-backdrop-filter:blur(20px);
-transition:0.4s;
-opacity:0;
-transform:translateY(50px);
-}
-
-.card:hover{
-transform:translateY(-10px);
-background:rgba(255,255,255,0.1);
-}
-
-.card.active{
-opacity:1;
-transform:translateY(0);
-}
-
-/* Login Modal */
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.8);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.modal-content{
-background:#111;
-padding:40px;
-border-radius:20px;
-width:350px;
-text-align:center;
-}
-
-.modal input{
-width:100%;
-padding:10px;
-margin:10px 0;
-border-radius:10px;
-border:none;
-}
-
-.modal button{
-width:100%;
-padding:10px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:white;
-color:black;
-font-weight:600;
-cursor:pointer;
-}
-
-/* Dashboard */
-.dashboard{
-display:none;
-padding:120px 8%;
-}
-
-.dashboard h2{
-margin-bottom:30px;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:20px;
-}
-
-.stat{
-background:rgba(255,255,255,0.05);
-padding:30px;
-border-radius:15px;
-text-align:center;
-}
+/* ===== Theme Toggle ===== */
+#theme-toggle{position:fixed;top:20px;right:20px;padding:10px 15px;border:none;border-radius:10px;background:#00ffff;color:#000;font-weight:700;cursor:pointer;z-index:400;box-shadow:0 0 15px #00ffff;transition:0.3s;}
+body.day{background:#ffffff;color:#000;}
+body.day .stat h3,body.day .notification,body.day #sidebar ul li,body.day canvas,body.day #chat-header{color:#ff0080 !important;box-shadow:0 0 15px #ff0080 !important;text-shadow:none !important;}
+body.day .hero p,body.day .card,body.day .modal-content{color:#000;background:rgba(255,255,255,0.1);}
+body.night{background:#0a0a0f;color:#fff;}
 </style>
 </head>
-<body>
+<body class="night">
 
+<!-- Particles -->
+<canvas id="particlesCanvas"></canvas>
+
+<!-- Navbar -->
 <nav>
-<h1>Tradesk Solution</h1>
+<h1>Pro AI Trades</h1>
 <button onclick="openLogin()">Login</button>
 </nav>
 
+<!-- Sidebar -->
+<div id="sidebar">
+<ul>
+<li class="active" onclick="switchTab('overview')">🏠 Overview</li>
+<li onclick="switchTab('trades')">📈 Trades</li>
+<li onclick="switchTab('market')">📊 Market</li>
+<li onclick="switchTab('ai')">🤖 AI Insights</li>
+<li onclick="switchTab('codesim')">💻 Code Simulation</li>
+</ul>
+</div>
+
+<!-- Hero -->
 <section class="hero">
-<h2>AI Powered Trading Intelligence Platform</h2>
-<p>Advanced AI tools, real-time analytics and smart automation for modern traders.</p>
+<h2>AI Powered Trading Intelligence</h2>
+<p>Advanced AI tools, real-time analytics, and smart automation for modern traders.</p>
 <div class="btns">
 <button class="primary" onclick="openLogin()">Get Started</button>
 <button class="secondary">Learn More</button>
 </div>
 </section>
 
-<section class="features">
-<div class="card reveal">
-<h3>Real-Time Market Data</h3>
-<p>Track live trading insights powered by AI.</p>
+<!-- Dashboard: Overview -->
+<section class="dashboard" id="overview">
+<h2>Overview</h2>
+<div class="stats">
+<div class="stat"><h3 id="profitCounter">0</h3><p>Total Profit</p></div>
+<div class="stat"><h3 id="accuracyCounter">0</h3><p>Accuracy Rate</p></div>
+<div class="stat"><h3 id="tradesCounter">0</h3><p>Active Trades</p></div>
 </div>
-
-<div class="card reveal">
-<h3>Smart AI Predictions</h3>
-<p>Machine learning forecasting engine.</p>
-</div>
-
-<div class="card reveal">
-<h3>Secure Infrastructure</h3>
-<p>Enterprise-grade data protection & encryption.</p>
+<div class="charts">
+<canvas id="profitChart"></canvas>
+<canvas id="accuracyChart"></canvas>
+<canvas id="tradesChart"></canvas>
 </div>
 </section>
+
+<!-- Dashboard: Trades -->
+<section class="dashboard" id="trades" style="display:none">
+<h2>Trades</h2>
+<p>List of latest trades, profits, and performance stats here.</p>
+</section>
+
+<!-- Dashboard: Market -->
+<section class="dashboard" id="market" style="display:none">
+<h2>Market Trends</h2>
+<p>Real-time market data and charts go here.</p>
+</section>
+
+<!-- Dashboard: AI Insights -->
+<section class="dashboard" id="ai" style="display:none">
+<h2>AI Insights</h2>
+<p>AI generated recommendations and analysis.</p>
+</section>
+
+<!-- Dashboard: Code Simulation -->
+<section class="dashboard" id="codesim" style="display:none">
+<h2>Code Simulation</h2>
+<p>Simulated trading algorithms in different languages:</p>
+
+<div class="code-tabs">
+<button class="code-tab active" onclick="switchCodeTab('java')">Java</button>
+<button class="code-tab" onclick="switchCodeTab('python')">Python</button>
+<button class="code-tab" onclick="switchCodeTab('cpp')">C++</button>
+<button class="code-tab" onclick="switchCodeTab('c')">C</button>
+</div>
+
+<pre class="code-block" id="java">public class TradeSimulator {
+    public static void main(String[] args){
+        double profit = 0;
+        for(int i=0;i<5;i++){
+            profit += Math.random()*1000;
+            System.out.println("Trade "+(i+1)+": $"+profit);
+        }
+    }
+}</pre>
+
+<pre class="code-block" id="python" style="display:none">
+profit = 0
+for i in range(5):
+    profit += random.randint(100,1000)
+    print(f"Trade {i+1}: ${profit}")
+</pre>
+
+<pre class="code-block" id="cpp" style="display:none">
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+int main(){
+    double profit = 0;
+    for(int i=0;i<5;i++){
+        profit += rand()%1000;
+        cout << "Trade " << i+1 << ": $" << profit << endl;
+    }
+}
+</pre>
+
+<pre class="code-block" id="c" style="display:none">
+#include <stdio.h>
+#include <stdlib.h>
+int main(){
+    double profit = 0;
+    for(int i=0;i<5;i++){
+        profit += rand()%1000;
+        printf("Trade %d: $%.2f\n", i+1, profit);
+    }
+}
+</pre>
+</section>
+
+<!-- AI Chat -->
+<div id="ai-chat">
+<div id="chat-header" onclick="toggleChat()">🤖 AI Assistant</div>
+<div id="chat-body"><div class="chat-message bot">Hi! I’m your AI trading assistant. 📈</div></div>
+<input type="text" id="chat-input" placeholder="Ask me something..." onkeydown="if(event.key==='Enter'){sendMessage();}">
+</div>
+
+<!-- Notifications -->
+<div id="notifications"></div>
 
 <!-- Login Modal -->
 <div class="modal" id="loginModal">
@@ -258,83 +231,55 @@ text-align:center;
 </div>
 </div>
 
-<!-- Dashboard -->
-<section class="dashboard" id="dashboard">
-<h2>Dashboard Overview</h2>
-<div class="stats">
-<div class="stat">
-<h3>$24,500</h3>
-<p>Total Profit</p>
-</div>
-<div class="stat">
-<h3>87%</h3>
-<p>Accuracy Rate</p>
-</div>
-<div class="stat">
-<h3>1,245</h3>
-<p>Active Trades</p>
-</div>
-</div>
-</section>
+<!-- Theme Toggle -->
+<button id="theme-toggle">🌙 Night Mode</button>
 
 <script>
-// Scroll Reveal
-const reveals=document.querySelectorAll(".card");
-window.addEventListener("scroll",()=>{
-const windowHeight=window.innerHeight;
-reveals.forEach(el=>{
-const top=el.getBoundingClientRect().top;
-if(top<windowHeight-100){
-el.classList.add("active");
-}
-});
-});
+// ===== Login =====
+function openLogin(){document.getElementById("loginModal").style.display="flex";}
+function closeLogin(){document.getElementById("loginModal").style.display="none";}
+function login(){document.getElementById("loginModal").style.display="none";document.querySelector(".hero").style.display="none";document.getElementById("overview").style.display="block";animateDashboardStats();}
 
-// Login Modal
-function openLogin(){
-document.getElementById("loginModal").style.display="flex";
+// ===== Tabs =====
+function switchTab(tabId){
+document.querySelectorAll(".dashboard").forEach(sec=>sec.style.display='none');
+document.getElementById(tabId).style.display='block';
+document.querySelectorAll("#sidebar ul li").forEach(li=>li.classList.remove("active"));
+document.querySelector(`#sidebar ul li[onclick="switchTab('${tabId}')"]`).classList.add("active");
 }
-function closeLogin(){
-document.getElementById("loginModal").style.display="none";
-}
-function login(){
-document.getElementById("loginModal").style.display="none";
-document.querySelector(".hero").style.display="none";
-document.querySelector(".features").style.display="none";
-document.getElementById("dashboard").style.display="block";
-}
+
+// ===== Animated Counters =====
+function animateCounter(id,start,end,duration){let current=start;const increment=(end-start)/(duration/50);const obj=document.getElementById(id);const interval=setInterval(()=>{current+=increment;if(current>=end){current=end;clearInterval(interval);}obj.innerText=id==='accuracyCounter'?Math.floor(current)+'%':Math.floor(current).toLocaleString();},50);}
+function animateDashboardStats(){animateCounter('profitCounter',0,24500,2000);animateCounter('accuracyCounter',0,87,2000);animateCounter('tradesCounter',0,1245,2000);}
+
+// ===== Charts =====
+const labels=Array.from({length:20},(_,i)=>i+1);
+function generateData(length,min,max){return Array.from({length},()=>Math.floor(Math.random()*(max-min)+min));}
+const profitCtx=document.getElementById('profitChart').getContext('2d');
+const accuracyCtx=document.getElementById('accuracyChart').getContext('2d');
+const tradesCtx=document.getElementById('tradesChart').getContext('2d');
+const profitChart=new Chart(profitCtx,{type:'line',data:{labels:[...labels],datasets:[{label:'Total Profit ($)',data:generateData(20,20000,35000),borderColor:'#00ffff',backgroundColor:'rgba(0,255,255,0.2)',tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:'#00ffff'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#00ffff',font:{size:16,weight:'bold'}}},tooltip:{enabled:true,backgroundColor:'rgba(0,255,255,0.8)',titleColor:'#000',bodyColor:'#000',displayColors:false}},scales:{x:{ticks:{color:'#00ffff'}},y:{ticks:{color:'#00ffff'}}},animation:{duration:500},maintainAspectRatio:false}});
+const accuracyChart=new Chart(accuracyCtx,{type:'line',data:{labels:[...labels],datasets:[{label:'Accuracy Rate (%)',data:generateData(20,70,95),borderColor:'#ff00ff',backgroundColor:'rgba(255,0,255,0.2)',tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:'#ff00ff'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#ff00ff',font:{size:16,weight:'bold'}}},tooltip:{enabled:true,backgroundColor:'rgba(255,0,255,0.8)',titleColor:'#000',bodyColor:'#000',displayColors:false}},scales:{x:{ticks:{color:'#ff00ff'}},y:{ticks:{color:'#ff00ff'}}},animation:{duration:500},maintainAspectRatio:false}});
+const tradesChart=new Chart(tradesCtx,{type:'bar',data:{labels:[...labels],datasets:[{label:'Active Trades',data:generateData(20,1000,1500),backgroundColor:'rgba(0,255,255,0.6)',borderColor:'#00ffff',borderWidth:2}]} ,options:{responsive:true,plugins:{legend:{labels:{color:'#00ffff',font:{size:16,weight:'bold'}}},tooltip:{enabled:true,backgroundColor:'rgba(0,255,255,0.8)',titleColor:'#000',bodyColor:'#000',displayColors:false}},scales:{x:{ticks:{color:'#00ffff'}},y:{ticks:{color:'#00ffff'}}},animation:{duration:500},maintainAspectRatio:false}});
+
+// ===== Theme Toggle =====
+const toggleButton=document.getElementById('theme-toggle');toggleButton.addEventListener('click',()=>{document.body.classList.toggle('night');document.body.classList.toggle('day');toggleButton.textContent=document.body.classList.contains('night')?'🌙 Night Mode':'☀️ Day Mode';});
+
+// ===== Code Tabs =====
+function switchCodeTab(lang){document.querySelectorAll('.code-tab').forEach(btn=>btn.classList.remove('active'));document.querySelectorAll('.code-block').forEach(block=>block.style.display='none');document.getElementById(lang).style.display='block';event.target.classList.add('active');}
+function simulateCodeExecution(){const codeBlocks=document.querySelectorAll('.code-block');codeBlocks.forEach(block=>{let lines=block.innerText.split('\n');let current=0;setInterval(()=>{if(current<lines.length){lines[current]=lines[current]+' // ✅ executed';block.innerText=lines.join('\n');current++;}},1000);});}
+simulateCodeExecution();
+
+// ===== AI Chat =====
+function toggleChat(){const body=document.getElementById('chat-body');body.style.display=body.style.display==='none'?'flex':'flex';}
+function sendMessage(){const input=document.getElementById('chat-input');const text=input.value.trim();if(!text) return;const chatBody=document.getElementById('chat-body');const userMsg=document.createElement('div');userMsg.classList.add('chat-message','user');userMsg.innerText=text;chatBody.appendChild(userMsg);input.value='';const botMsg=document.createElement('div');botMsg.classList.add('chat-message','bot');botMsg.innerText='Analyzing trade patterns... 📊';chatBody.appendChild(botMsg);chatBody.scrollTop=chatBody.scrollHeight;}
+
+// ===== Notifications =====
+function addNotification(msg){const notif=document.createElement('div');notif.classList.add('notification');notif.innerText=msg;document.getElementById('notifications').appendChild(notif);setTimeout(()=>notif.remove(),4000);}
+setInterval(()=>addNotification('New trade executed! 💹'),5000);
+
+// ===== Particles =====
+const canvas=document.getElementById('particlesCanvas');const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;let particles=[];function initParticles(){particles=[];for(let i=0;i<150;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,radius:Math.random()*2+1,dx:(Math.random()-0.5)*0.5,dy:(Math.random()-0.5)*0.5})}}initParticles();function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);ctx.fillStyle='rgba(0,255,255,0.5)';ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1;});requestAnimationFrame(drawParticles);}drawParticles();window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;initParticles();});
 </script>
-<button id="theme-toggle">🌙 Night Mode</button>
-  body {
-    background-color: #ffffff; /* Day mode background */
-    color: #000000;           /* Day mode text color */
-    transition: background-color 0.3s, color 0.3s;
-}
-
-body.night {
-    background-color: #1e1e2f; /* Night mode background */
-    color: #f5f5f5;           /* Night mode text color */
-}
-
-/* Optional: button style */
-#theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 15px;
-    cursor: pointer;
-}
-  const toggleButton = document.getElementById('theme-toggle');
-
-toggleButton.addEventListener('click', () => {
-    document.body.classList.toggle('night');
-    
-    if(document.body.classList.contains('night')){
-        toggleButton.textContent = '☀️ Day Mode';
-    } else {
-        toggleButton.textContent = '🌙 Night Mode';
-    }
-});
-  
 </body>
 </html>
