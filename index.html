@@ -1,11 +1,309 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Website</title>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tradesk Solution</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{
+background:#0a0a0f;
+color:white;
+overflow-x:hidden;
+transition:0.4s;
+}
+
+/* Animated Gradient Background */
+body::before{
+content:'';
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:radial-gradient(circle at 20% 30%,#1e3a8a,transparent),
+radial-gradient(circle at 80% 70%,#7c3aed,transparent);
+z-index:-1;
+animation:moveBg 8s infinite alternate;
+}
+
+@keyframes moveBg{
+0%{transform:scale(1)}
+100%{transform:scale(1.2)}
+}
+
+/* Navbar */
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 8%;
+backdrop-filter:blur(10px);
+background:rgba(0,0,0,0.4);
+position:fixed;
+width:100%;
+z-index:100;
+}
+
+nav h1{
+font-size:24px;
+font-weight:700;
+}
+
+nav button{
+padding:8px 15px;
+border-radius:20px;
+border:none;
+cursor:pointer;
+background:white;
+color:black;
+font-weight:600;
+}
+
+/* Hero */
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:0 20px;
+}
+
+.hero h2{
+font-size:60px;
+font-weight:800;
+max-width:900px;
+}
+
+.hero p{
+margin-top:20px;
+font-size:18px;
+opacity:0.7;
+max-width:600px;
+}
+
+.hero .btns{
+margin-top:30px;
+}
+
+.hero button{
+padding:14px 35px;
+margin:10px;
+border-radius:40px;
+border:none;
+cursor:pointer;
+font-size:16px;
+transition:0.3s;
+}
+
+.primary{
+background:white;
+color:black;
+}
+
+.primary:hover{
+transform:scale(1.1);
+}
+
+.secondary{
+background:transparent;
+border:1px solid white;
+color:white;
+}
+
+.secondary:hover{
+background:white;
+color:black;
+}
+
+/* Features */
+.features{
+padding:100px 8%;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:40px;
+border-radius:20px;
+backdrop-filter:blur(20px);
+transition:0.4s;
+opacity:0;
+transform:translateY(50px);
+}
+
+.card:hover{
+transform:translateY(-10px);
+background:rgba(255,255,255,0.1);
+}
+
+.card.active{
+opacity:1;
+transform:translateY(0);
+}
+
+/* Login Modal */
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:#111;
+padding:40px;
+border-radius:20px;
+width:350px;
+text-align:center;
+}
+
+.modal input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:10px;
+border:none;
+}
+
+.modal button{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:white;
+color:black;
+font-weight:600;
+cursor:pointer;
+}
+
+/* Dashboard */
+.dashboard{
+display:none;
+padding:120px 8%;
+}
+
+.dashboard h2{
+margin-bottom:30px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+}
+
+.stat{
+background:rgba(255,255,255,0.05);
+padding:30px;
+border-radius:15px;
+text-align:center;
+}
+</style>
 </head>
 <body>
-<h1>Hello World</h1>
+
+<nav>
+<h1>Tradesk Solution</h1>
+<button onclick="openLogin()">Login</button>
+</nav>
+
+<section class="hero">
+<h2>AI Powered Trading Intelligence Platform</h2>
+<p>Advanced AI tools, real-time analytics and smart automation for modern traders.</p>
+<div class="btns">
+<button class="primary" onclick="openLogin()">Get Started</button>
+<button class="secondary">Learn More</button>
+</div>
+</section>
+
+<section class="features">
+<div class="card reveal">
+<h3>Real-Time Market Data</h3>
+<p>Track live trading insights powered by AI.</p>
+</div>
+
+<div class="card reveal">
+<h3>Smart AI Predictions</h3>
+<p>Machine learning forecasting engine.</p>
+</div>
+
+<div class="card reveal">
+<h3>Secure Infrastructure</h3>
+<p>Enterprise-grade data protection & encryption.</p>
+</div>
+</section>
+
+<!-- Login Modal -->
+<div class="modal" id="loginModal">
+<div class="modal-content">
+<h3>Login</h3>
+<input type="text" placeholder="Username">
+<input type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="closeLogin()">Cancel</button>
+</div>
+</div>
+
+<!-- Dashboard -->
+<section class="dashboard" id="dashboard">
+<h2>Dashboard Overview</h2>
+<div class="stats">
+<div class="stat">
+<h3>$24,500</h3>
+<p>Total Profit</p>
+</div>
+<div class="stat">
+<h3>87%</h3>
+<p>Accuracy Rate</p>
+</div>
+<div class="stat">
+<h3>1,245</h3>
+<p>Active Trades</p>
+</div>
+</div>
+</section>
+
+<script>
+// Scroll Reveal
+const reveals=document.querySelectorAll(".card");
+window.addEventListener("scroll",()=>{
+const windowHeight=window.innerHeight;
+reveals.forEach(el=>{
+const top=el.getBoundingClientRect().top;
+if(top<windowHeight-100){
+el.classList.add("active");
+}
+});
+});
+
+// Login Modal
+function openLogin(){
+document.getElementById("loginModal").style.display="flex";
+}
+function closeLogin(){
+document.getElementById("loginModal").style.display="none";
+}
+function login(){
+document.getElementById("loginModal").style.display="none";
+document.querySelector(".hero").style.display="none";
+document.querySelector(".features").style.display="none";
+document.getElementById("dashboard").style.display="block";
+}
+</script>
+
 </body>
 </html>
